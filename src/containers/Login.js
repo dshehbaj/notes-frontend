@@ -5,6 +5,7 @@ import "./Login.css";
 import { Auth } from "aws-amplify";
 import { useAppContext } from "../libs/contextLib";
 import LoaderButton from "../components/LoaderButton";
+import { onError } from "../libs/errorLib";
 
 export default function Login() {
 
@@ -28,7 +29,7 @@ export default function Login() {
       userHasAuthenticated(true);
       history.push("/");
     } catch (e) {
-      alert(e.message);
+      onError(e);
     }
   }
 
