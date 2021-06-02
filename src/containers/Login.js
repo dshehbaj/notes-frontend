@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import "./Login.css";
 import { Auth } from "aws-amplify";
 import { useAppContext } from "../libs/contextLib";
+import LoaderButton from "../components/LoaderButton";
 
 export default function Login() {
 
@@ -52,9 +52,15 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
-          Login
-        </Button>
+          <LoaderButton
+            block
+            size="lg"
+            type="submit"
+            isLoading={isLoading}
+            disabled={!validateForm()}
+          >
+            Login
+          </LoaderButton>
       </Form>
     </div>
   );
