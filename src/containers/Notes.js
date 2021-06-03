@@ -5,6 +5,7 @@ import { onError } from "../libs/errorLib";
 import config from "../config";
 import Form from "react-bootstrap/Form";
 import LoaderButton from "../components/LoaderButton";
+import { s3Upload } from "../libs/awsLib";
 import "./Notes.css";
 
 export default function Notes() {
@@ -53,6 +54,12 @@ export default function Notes() {
     file.current = event.target.files[0];
   }
 
+  function saveNote(note) {
+    return API.put("notes", `/notes/${id}`, {
+      body: note
+    });
+  }
+
   async function handleSubmit(event) {
     let attachment;
 
@@ -67,6 +74,26 @@ export default function Notes() {
     }
 
     setIsLoading(true);
+
+    try {
+      if (file.current) {
+        attachment = await s3Upload(file.current);
+      }
+
+      await saveNote({
+        content,
+        attachment: attachment || note.attachment
+      });
+      history.push("/");
+
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  function deleteNote() {
+    return API.del("notes", `/notes/${id}`);
   }
 
   async function handleDelete(event) {
@@ -81,6 +108,14 @@ export default function Notes() {
     }
 
     setIsDeleting(true);
+
+    try {
+      await deleteNote();
+      history.push("/");
+    } catch (e) {
+      onError(e);
+      setIsDeleting(false);
+    }
   }
 
   return (
